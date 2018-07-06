@@ -7,6 +7,7 @@
 #include <QStandardPaths>
 #include <QMimeData>
 #include <QActionGroup>
+#include <QIcon>
 
 #include "dialogs/newdialog.h"
 #include "widgets/paintwidget.h"
@@ -39,6 +40,7 @@ private slots:
     void on_actionExit_triggered();
 
     void setPanTool(bool selected);
+    void setSelectTool(bool selected);
 
 private:
     Ui::MainWindow *ui;

@@ -22,7 +22,9 @@ MainWindow::MainWindow(QWidget *parent) :
     _lastFileLoc = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
     connect(ui->layerView,SIGNAL(itemschanged()),this,SLOT(updateLayers()));
+
     connect(ui->panTool,SIGNAL(toggled(bool)),this,SLOT(setPanTool(bool)));
+    connect(ui->selectTool,SIGNAL(toggled(bool)),this,SLOT(setSelectTool(bool)));
 
     _toolsGroup = new QActionGroup(ui->mainToolBar);
     _toolsGroup->addAction(ui->selectTool);
@@ -188,5 +190,16 @@ void MainWindow::setPanTool(bool selected)
         }else{
             paintWidget->setDragMode(QGraphicsView::NoDrag);
         }
+    }
+}
+
+void MainWindow::setSelectTool(bool selected)
+{
+    if(selected){
+        QPixmap cursorIco = QIcon(":/tools/select.svg").pixmap(QSize(15,15));
+        QCursor cur(cursorIco,0,0);
+        setCursor(cur);
+    }else{
+        setCursor(Qt::ArrowCursor);
     }
 }
