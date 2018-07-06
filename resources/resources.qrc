@@ -15,5 +15,7 @@
         <file>icons/angle-right.svg</file>
         <file>icons/angle-left.svg</file>
         <file>icons/angle-bottom.svg</file>
+        <file>tools/select.svg</file>
+        <file>tools/pan.svg</file>
     </qresource>
 </RCC>

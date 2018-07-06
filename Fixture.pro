@@ -47,8 +47,21 @@ FORMS += \
     src/dialogs/newdialog.ui \
 
 RESOURCES += \
+    resources/resources.qrc \
     resources/resources.qrc
 
 DISTFILES += \
     resources/icons/close-white-lighter.svg \
-    resources/icons/close-white.svg
+    resources/icons/close-white.svg \
+    resources/checkers.png \
+    resources/icons/angle-bottom.svg \
+    resources/icons/angle-left.svg \
+    resources/icons/angle-right.svg \
+    resources/icons/angle-top.svg \
+    resources/icons/close-white-dark.svg \
+    resources/icons/close-white-lighter.svg \
+    resources/icons/close-white.svg \
+    resources/tools/select.svg \
+    resources/basic.qss \
+    resources/layermanager.qss \
+    resources/paintwidget.qss

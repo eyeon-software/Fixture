@@ -23,6 +23,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->layerView,SIGNAL(itemschanged()),this,SLOT(updateLayers()));
 
+    _toolsGroup = new QActionGroup(ui->mainToolBar);
+    _toolsGroup->addAction(ui->selectTool);
+    _toolsList.push_back(ui->selectTool);
+    _toolsGroup->addAction(ui->panTool);
+    _toolsList.push_back(ui->panTool);
+    ui->mainToolBar->addActions(_toolsList);
 }
 
 MainWindow::~MainWindow()

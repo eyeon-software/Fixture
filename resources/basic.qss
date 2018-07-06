@@ -8,8 +8,19 @@ QMainWindow {
 
 #mainToolBar {
     background-color: #262626;
-    border: 1px solid #1a1a1a;
-    border-radius: 3px;
+}
+
+QToolButton{
+    padding: 10;
+    border: none;
+}
+
+QToolButton:hover{
+    background-color: #333;
+}
+
+QToolButton:checked{
+    background-color: #111;
 }
 
 QTabBar  {
@@ -137,3 +148,5 @@ QMdiSubWindow QScrollBar:down-arrow:vertical {
     margin-top: 5px;
     image: url(:/icons/angle-bottom.svg);
 }
+
+
