@@ -38,6 +38,8 @@ private slots:
 
     void on_actionExit_triggered();
 
+    void setPanTool(bool selected);
+
 private:
     Ui::MainWindow *ui;
     QString _lastFileLoc;

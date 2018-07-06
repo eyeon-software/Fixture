@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _lastFileLoc = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
     connect(ui->layerView,SIGNAL(itemschanged()),this,SLOT(updateLayers()));
+    connect(ui->panTool,SIGNAL(toggled(bool)),this,SLOT(setPanTool(bool)));
 
     _toolsGroup = new QActionGroup(ui->mainToolBar);
     _toolsGroup->addAction(ui->selectTool);
@@ -172,4 +173,16 @@ void MainWindow::on_actionImport_triggered()
     PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
     paintWidget->addNewLayer(fileName);
     ui->layerView->updateItems(paintWidget->getItems());
+}
+
+void MainWindow::setPanTool(bool selected)
+{
+    QMdiSubWindow *currentWindow = ui->mdiArea->activeSubWindow();
+    PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
+
+    if(selected){
+        paintWidget->setDragMode(QGraphicsView::ScrollHandDrag);
+    }else{
+        paintWidget->setDragMode(QGraphicsView::NoDrag);
+    }
 }
