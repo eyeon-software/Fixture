@@ -30,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
     _toolsGroup->addAction(ui->panTool);
     _toolsList.push_back(ui->panTool);
     ui->mainToolBar->addActions(_toolsList);
+
+    ui->selectTool->toggle();
 }
 
 MainWindow::~MainWindow()
@@ -178,11 +180,13 @@ void MainWindow::on_actionImport_triggered()
 void MainWindow::setPanTool(bool selected)
 {
     QMdiSubWindow *currentWindow = ui->mdiArea->activeSubWindow();
-    PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
 
-    if(selected){
-        paintWidget->setDragMode(QGraphicsView::ScrollHandDrag);
-    }else{
-        paintWidget->setDragMode(QGraphicsView::NoDrag);
+    if(currentWindow != NULL){
+        PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
+        if(selected){
+            paintWidget->setDragMode(QGraphicsView::ScrollHandDrag);
+        }else{
+            paintWidget->setDragMode(QGraphicsView::NoDrag);
+        }
     }
 }
