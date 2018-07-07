@@ -269,39 +269,6 @@ padding: 2px; </string>
     <string>Alt+F4</string>
    </property>
   </action>
-  <action name="selectTool">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../resources/resources.qrc">
-     <normaloff>:/tools/select.svg</normaloff>:/tools/select.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Select Tool</string>
-   </property>
-   <property name="toolTip">
-    <string>Select Tool</string>
-   </property>
-   <property name="shortcut">
-    <string>V</string>
-   </property>
-  </action>
-  <action name="panTool">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../resources/resources.qrc">
-     <normaloff>:/tools/pan.svg</normaloff>:/tools/pan.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Pan Tool</string>
-   </property>
-   <property name="shortcut">
-    <string>Space</string>
-   </property>
-  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -311,8 +278,6 @@ padding: 2px; </string>
    <header>src/widgets/layermanager.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../resources/resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

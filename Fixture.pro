@@ -31,7 +31,10 @@ SOURCES +=  \
     src/widgets/layermanager.cpp \
     src/items/drawing.cpp \
     src/items/layer.cpp \
-    src/model/canvas.cpp
+    src/model/canvas.cpp \
+    src/tools/tool.cpp \
+    src/tools/selecttool.cpp \
+    src/tools/pantool.cpp
 
 HEADERS += \
     src/dialogs/newdialog.h \
@@ -40,19 +43,19 @@ HEADERS += \
     src/widgets/layermanager.h \
     src/items/drawing.h \
     src/items/layer.h \
-    src/model/canvas.h
+    src/model/canvas.h \
+    src/tools/tool.h \
+    src/tools/selecttool.h \
+    src/tools/pantool.h
 
 FORMS += \
     src/mainwindow.ui \
     src/dialogs/newdialog.ui \
 
 RESOURCES += \
-    resources/resources.qrc \
     resources/resources.qrc
 
 DISTFILES += \
-    resources/icons/close-white-lighter.svg \
-    resources/icons/close-white.svg \
     resources/checkers.png \
     resources/icons/angle-bottom.svg \
     resources/icons/angle-left.svg \
@@ -62,6 +65,7 @@ DISTFILES += \
     resources/icons/close-white-lighter.svg \
     resources/icons/close-white.svg \
     resources/tools/select.svg \
+    resources/tools/pan.svg \
     resources/basic.qss \
     resources/layermanager.qss \
     resources/paintwidget.qss

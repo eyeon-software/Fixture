@@ -11,6 +11,8 @@
 
 #include "dialogs/newdialog.h"
 #include "widgets/paintwidget.h"
+#include "tools/pantool.h"
+#include "tools/selecttool.h"
 
 namespace Ui {
 class MainWindow;
@@ -39,14 +41,17 @@ private slots:
 
     void on_actionExit_triggered();
 
-    void setPanTool(bool selected);
-    void setSelectTool(bool selected);
+    void setTool(QAction* action);
 
 private:
     Ui::MainWindow *ui;
     QString _lastFileLoc;
     QActionGroup *_toolsGroup;
     QList<QAction*> _toolsList;
+
+    SelectTool *_select;
+    PanTool *_pan;
+    Tool::ToolType _currentTool;
 
     const QString chooseFile();
     void addChildWindow(PaintWidget *widget, bool isNew);

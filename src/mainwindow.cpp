@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QDebug>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -23,17 +25,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->layerView,SIGNAL(itemschanged()),this,SLOT(updateLayers()));
 
-    connect(ui->panTool,SIGNAL(toggled(bool)),this,SLOT(setPanTool(bool)));
-    connect(ui->selectTool,SIGNAL(toggled(bool)),this,SLOT(setSelectTool(bool)));
-
     _toolsGroup = new QActionGroup(ui->mainToolBar);
-    _toolsGroup->addAction(ui->selectTool);
-    _toolsList.push_back(ui->selectTool);
-    _toolsGroup->addAction(ui->panTool);
-    _toolsList.push_back(ui->panTool);
+
+    _select = new SelectTool();
+    _toolsGroup->addAction(_select);
+    _toolsList.push_back(_select);
+
+    _pan = new PanTool();
+    _toolsGroup->addAction(_pan);
+    _toolsList.push_back(_pan);
+
+    connect(ui->mainToolBar,SIGNAL(actionTriggered(QAction*)),this,SLOT(setTool(QAction*)));
+
     ui->mainToolBar->addActions(_toolsList);
 
-    ui->selectTool->toggle();
+    _select->toggle();
+    _currentTool = Tool::SelectTool;
 }
 
 MainWindow::~MainWindow()
@@ -114,6 +121,10 @@ void MainWindow::updateWindow(QMdiSubWindow *window)
 void MainWindow::addPaintWidget(PaintWidget *widget,bool isNew)
 {
     addChildWindow(widget,isNew);
+
+    if(_select->isChecked()){
+        ui->mdiArea->setCursor(_select->getToolCursor());
+    }
 }
 
 PaintWidget *MainWindow::createPaintWidget(const QString &imagePath) const
@@ -130,11 +141,12 @@ void MainWindow::on_actionOpen_triggered()
         addPaintWidget(new PaintWidget(fileName));
     }
 }
- void MainWindow::rememberLastPath(const QString &fileName)
- {
-     QFileInfo info(fileName);
-     _lastFileLoc = info.absolutePath();
- }
+
+void MainWindow::rememberLastPath(const QString &fileName)
+{
+ QFileInfo info(fileName);
+ _lastFileLoc = info.absolutePath();
+}
 
 const QString MainWindow::chooseFile()
 {
@@ -179,27 +191,35 @@ void MainWindow::on_actionImport_triggered()
     ui->layerView->updateItems(paintWidget->getItems());
 }
 
-void MainWindow::setPanTool(bool selected)
+void MainWindow::setTool(QAction* action)
 {
+    Tool *activeTool = dynamic_cast<Tool*>(action);
     QMdiSubWindow *currentWindow = ui->mdiArea->activeSubWindow();
+    PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());;
 
-    if(currentWindow != NULL){
-        PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
-        if(selected){
+    switch (activeTool->getToolType()){
+
+    case Tool::SelectTool:
+
+        _currentTool = Tool::SelectTool;
+        ui->mdiArea->setCursor(activeTool->getToolCursor());
+        break;
+
+    case Tool::PanTool:
+
+        _currentTool = Tool::PanTool;
+        if(paintWidget != NULL){
             paintWidget->setDragMode(QGraphicsView::ScrollHandDrag);
-        }else{
+        }
+        break;
+
+    }
+
+    if (activeTool->getToolType() != Tool::PanTool){
+        if(paintWidget != NULL){
             paintWidget->setDragMode(QGraphicsView::NoDrag);
         }
     }
+
 }
 
-void MainWindow::setSelectTool(bool selected)
-{
-    if(selected){
-        QPixmap cursorIco = QIcon(":/tools/select.svg").pixmap(QSize(15,15));
-        QCursor cur(cursorIco,0,0);
-        setCursor(cur);
-    }else{
-        setCursor(Qt::ArrowCursor);
-    }
-}
