@@ -25,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->layerView,SIGNAL(itemschanged()),this,SLOT(updateLayers()));
 
+    _currentPaintWidget = NULL;
+
     _toolsGroup = new QActionGroup(ui->mainToolBar);
 
     _select = new SelectTool();
@@ -35,7 +37,11 @@ MainWindow::MainWindow(QWidget *parent) :
     _toolsGroup->addAction(_pan);
     _toolsList.push_back(_pan);
 
-    connect(ui->mainToolBar,SIGNAL(actionTriggered(QAction*)),this,SLOT(setTool(QAction*)));
+    connect(ui->mainToolBar,SIGNAL(actionTriggered(QAction*)),
+            this,SLOT(toolChanged(QAction*)));
+
+    connect(ui->layerView,SIGNAL(itemSelectionChanged()),
+             this,SLOT(onSelectionChange()));
 
     ui->mainToolBar->addActions(_toolsList);
 
@@ -110,12 +116,44 @@ void MainWindow::updateWindow(QMdiSubWindow *window)
     if (window != NULL) {
         title = window->windowTitle() + " - " + title;
         PaintWidget* wid = qobject_cast<PaintWidget*> (window->widget());
+        _currentPaintWidget = wid;
         ui->layerView->updateItems(wid->getItems());
     } else {
         ui->layerView->clear();
     }
     ui->actionImport->setEnabled(window != NULL);
     setWindowTitle(title);
+}
+
+void MainWindow::toolChanged(QAction *action)
+{
+    QMdiSubWindow *currentWindow = ui->mdiArea->activeSubWindow();
+    if(currentWindow != NULL){
+        PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
+        paintWidget->toolChanged(action);
+    }
+}
+
+void MainWindow::onSelectionChange()
+{
+    QMdiSubWindow *currentWindow = ui->mdiArea->activeSubWindow();
+
+    if(currentWindow != NULL){
+        PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
+        QList<Layer> items = paintWidget->getItems();
+        QList<QListWidgetItem*> selectedItems = ui->layerView->selectedItems();
+        QList<QListWidgetItem*>::iterator itrSelect = selectedItems.begin();
+        QList<Layer>::iterator itrPresent = items.begin();
+        QList<int> selected;
+        for(int i=0;itrSelect!= selectedItems.end();++itrSelect,i++){
+            for(;itrPresent != items.end();++itrPresent) {
+                if(*itrSelect == itrPresent->getListItem()){
+                    selected.push_back(i);
+                }
+            }
+        }
+        paintWidget->setSelectedLayers(selected);
+    }
 }
 
 void MainWindow::addPaintWidget(PaintWidget *widget,bool isNew)
@@ -191,35 +229,4 @@ void MainWindow::on_actionImport_triggered()
     ui->layerView->updateItems(paintWidget->getItems());
 }
 
-void MainWindow::setTool(QAction* action)
-{
-    Tool *activeTool = dynamic_cast<Tool*>(action);
-    QMdiSubWindow *currentWindow = ui->mdiArea->activeSubWindow();
-    PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());;
-
-    switch (activeTool->getToolType()){
-
-    case Tool::SelectTool:
-
-        _currentTool = Tool::SelectTool;
-        ui->mdiArea->setCursor(activeTool->getToolCursor());
-        break;
-
-    case Tool::PanTool:
-
-        _currentTool = Tool::PanTool;
-        if(paintWidget != NULL){
-            paintWidget->setDragMode(QGraphicsView::ScrollHandDrag);
-        }
-        break;
-
-    }
-
-    if (activeTool->getToolType() != Tool::PanTool){
-        if(paintWidget != NULL){
-            paintWidget->setDragMode(QGraphicsView::NoDrag);
-        }
-    }
-
-}
 

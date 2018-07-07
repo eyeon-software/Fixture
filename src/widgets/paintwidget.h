@@ -13,6 +13,7 @@
 #include <QMimeData>
 #include <QGraphicsSceneDragDropEvent>
 #include <QDebug>
+#include <QAction>
 
 #include <iostream>
 #include <cmath>
@@ -21,6 +22,8 @@
 #include "../widgets/paintwidget.h"
 #include "../model/canvas.h"
 #include "../items/layer.h"
+#include "../tools/selecttool.h"
+#include "../tools/pantool.h"
 
 class PaintWidget : public QGraphicsView
 {
@@ -34,7 +37,9 @@ public:
     inline QList<Layer> getItems() const { return _items; }
     // This has to be extended to accomodate new documents
     inline void updateLayers(QList<Layer> items){ d->updateImageCanvas(items); }
+    inline void setSelectedLayers(QList<int> layers){ _selectedLayers = layers; }
     static bool isFileValid(const QString& fileName);
+    void toolChanged(QAction *action);
 
 public slots:
     void addNewLayer(const QString &imagePath);
@@ -45,12 +50,15 @@ protected:
 private:
     Drawing *d;
     QString _imagePath;
-    void addStyleSheet();
     QList<Layer> _items;
+    Tool::ToolType _currentTool;
+    QList<int> _selectedLayers;
+
     QImage getImageFromPath(const QString &imagePath);
     void setupCanvas(QImage image);
     void pushLayer(QImage image, const QString &name);
     bool isRaw(const QString &imagePath);
+    void addStyleSheet();
 
     static bool isImageSupported(const QString& fileName);
 };

@@ -136,6 +136,28 @@ void PaintWidget::pushLayer(QImage image, const QString& name)
     Layer l(name,image,0,0,image.width(),image.height());
     _items.push_back(l);
 }
+
+void PaintWidget::toolChanged(QAction *action)
+{
+    Tool *activeTool = dynamic_cast<Tool*>(action);
+    switch (activeTool->getToolType()){
+
+    case Tool::SelectTool:
+        _currentTool = Tool::SelectTool;
+        setCursor(activeTool->getToolCursor());
+        break;
+
+    case Tool::PanTool:
+        _currentTool = Tool::PanTool;
+        setDragMode(QGraphicsView::ScrollHandDrag);
+        break;
+    }
+
+    if (activeTool->getToolType() != Tool::PanTool){
+        setDragMode(QGraphicsView::NoDrag);
+    }
+}
+
 /**
  * @brief PaintWidget::wheelEvent Overrides the wheelEvent of QGraphicsView
  * Implements zooming in and out according to the position of the cursor

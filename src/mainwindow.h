@@ -32,23 +32,19 @@ public slots:
 
 private slots:
     void updateWindow(QMdiSubWindow *window);
-
+    void toolChanged(QAction* action);
+    void onSelectionChange();
     void on_actionNew_triggered();
-
     void on_actionOpen_triggered();
-
     void on_actionImport_triggered();
-
-    void on_actionExit_triggered();
-
-    void setTool(QAction* action);
+    void on_actionExit_triggered();    
 
 private:
     Ui::MainWindow *ui;
     QString _lastFileLoc;
     QActionGroup *_toolsGroup;
     QList<QAction*> _toolsList;
-
+    PaintWidget *_currentPaintWidget;
     SelectTool *_select;
     PanTool *_pan;
     Tool::ToolType _currentTool;
