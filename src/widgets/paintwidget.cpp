@@ -1,5 +1,5 @@
 #include "paintwidget.h"
-
+#include <QDebug>
 /**
  * @brief PaintWidget::PaintWidget Constructs a new PaintWidget for a new document
  * Creates a new canvas based on image path
@@ -7,7 +7,8 @@
  * @param parent
  */
 PaintWidget::PaintWidget(const QString &imagePath,QWidget *parent):
-    QGraphicsView(parent)
+    _curMousex(0), _curMousey(0), _prevMousex(0),_prevMousey(0),
+    _leftClick(false), QGraphicsView(parent)
 {
     _imagePath = imagePath;
     QImage image = getImageFromPath(imagePath);
@@ -27,8 +28,9 @@ PaintWidget::PaintWidget(const QString &imagePath,QWidget *parent):
  * @param document
  * @param parent
  */
-PaintWidget::PaintWidget(const Canvas *canvas, QWidget *parent)
-    : QGraphicsView(parent)
+PaintWidget::PaintWidget(const Canvas *canvas, QWidget *parent):
+    _curMousex(0), _curMousey(0), _prevMousex(0),_prevMousey(0),
+    QGraphicsView(parent)
 {
     setImagePath(canvas->getName());
     
@@ -177,4 +179,42 @@ void PaintWidget::wheelEvent(QWheelEvent *event)
     const QPointF move = p1mouse - event->pos(); // The move
     horizontalScrollBar()->setValue(move.x() + horizontalScrollBar()->value());
     verticalScrollBar()->setValue(move.y() + verticalScrollBar()->value());
+}
+
+void PaintWidget::mousePressEvent(QMouseEvent *event)
+{
+    _curMousex = event->x();
+    _curMousey = event->y();
+
+    if(event->button() == Qt::LeftButton){
+        _leftClick = true;
+    }else{
+        _leftClick = false;
+    }
+
+    QGraphicsView::mousePressEvent(event);
+}
+
+void PaintWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    if(_leftClick){
+        if(_currentTool == Tool::Transform){
+            QList<Layer*>::iterator itr = _selectedLayers.begin();
+            int diffx = _curMousex - _prevMousex;
+            int diffy = _curMousey - _prevMousey;
+            for(;itr!=_selectedLayers.end();++itr){
+                Layer* temp = *itr;
+                int x = temp->getX() + diffx;
+                int y = temp->getY() + diffy;
+                temp->setPos(x,y);
+            }
+            _prevMousex = _curMousex;
+            _prevMousey = _curMousey;
+            _curMousex = event->x();
+            _curMousey = event->y();
+            d->updateImageCanvas(_items);
+        }
+    }
+
+    QGraphicsView::mouseMoveEvent(event);
 }

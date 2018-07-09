@@ -9,6 +9,7 @@ LayerManager::LayerManager(QWidget *parent):
     QString style( styleFile.readAll() );
     setStyleSheet(style);
     installEventFilter(this);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
 }
 
 LayerManager::~LayerManager()

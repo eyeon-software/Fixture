@@ -36,7 +36,7 @@ public:
     inline QList<Layer*> getItems() const { return _items; }
     // This has to be extended to accomodate new documents
     inline void updateLayers(QList<Layer*> items){ d->updateImageCanvas(items); }
-    inline void setSelectedLayers(QList<int> layers){ _selectedLayers = layers; }
+    inline void setSelectedLayers(QList<Layer*> layers){ _selectedLayers = layers; }
     static bool isFileValid(const QString& fileName);
     void toolChanged(QAction *action);
 
@@ -45,13 +45,17 @@ public slots:
 
 protected:
     void wheelEvent(QWheelEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
 
 private:
     Drawing *d;
     QString _imagePath;
     QList<Layer*> _items;
     Tool::ToolType _currentTool;
-    QList<int> _selectedLayers;
+    QList<Layer*> _selectedLayers;
+    int _curMousex, _curMousey,_prevMousex,_prevMousey;
+    bool _leftClick;
 
     QImage getImageFromPath(const QString &imagePath);
     void setupCanvas(QImage image);

@@ -4,6 +4,7 @@
 #include <QListWidget>
 #include <QEvent>
 #include <QFile>
+#include <QPainter>
 
 #include "../layers/rasterlayer.h"
 

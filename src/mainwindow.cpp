@@ -137,7 +137,17 @@ void MainWindow::onSelectionChange()
     QMdiSubWindow *currentWindow = ui->mdiArea->activeSubWindow();
 
     if(currentWindow != NULL){
+        QList<QListWidgetItem*> widgetItems = ui->layerView->selectedItems();
+        PaintWidget* wid = qobject_cast<PaintWidget*>(currentWindow->widget());
+        QList<Layer*> layerItems;
+        QList<QListWidgetItem*>::iterator itr = widgetItems.begin();
 
+        for(;itr != widgetItems.end();++itr){
+            Layer *l = dynamic_cast<Layer*>(*itr);
+            layerItems.push_back(l);
+        }
+
+        wid->setSelectedLayers(layerItems);
     }
 }
 
