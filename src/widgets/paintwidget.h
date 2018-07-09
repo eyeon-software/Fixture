@@ -12,7 +12,6 @@
 #include <QFileInfo>
 #include <QMimeData>
 #include <QGraphicsSceneDragDropEvent>
-#include <QDebug>
 #include <QAction>
 
 #include <iostream>

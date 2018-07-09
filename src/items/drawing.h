@@ -11,7 +11,6 @@
 #include <QWidget>
 #include <QGraphicsSceneDragDropEvent>
 #include <QMimeData>
-#include <QDebug>
 
 #include "layer.h"
 
