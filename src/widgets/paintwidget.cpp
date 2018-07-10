@@ -8,7 +8,7 @@
  */
 PaintWidget::PaintWidget(const QString &imagePath,QWidget *parent):
     _curMousex(0), _curMousey(0), _prevMousex(0),_prevMousey(0),
-    _leftClick(false), QGraphicsView(parent)
+    _leftClick(false),_firstMove(false), QGraphicsView(parent)
 {
     _imagePath = imagePath;
     QImage image = getImageFromPath(imagePath);
@@ -30,7 +30,7 @@ PaintWidget::PaintWidget(const QString &imagePath,QWidget *parent):
  */
 PaintWidget::PaintWidget(const Canvas *canvas, QWidget *parent):
     _curMousex(0), _curMousey(0), _prevMousex(0),_prevMousey(0),
-    QGraphicsView(parent)
+    _leftClick(false),_firstMove(false), QGraphicsView(parent)
 {
     setImagePath(canvas->getName());
     
@@ -191,8 +191,14 @@ void PaintWidget::mousePressEvent(QMouseEvent *event)
     }else{
         _leftClick = false;
     }
-
+    _firstMove = true;
     QGraphicsView::mousePressEvent(event);
+}
+
+void PaintWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    _firstMove = false;
+    QGraphicsView::mouseReleaseEvent(event);
 }
 
 void PaintWidget::mouseMoveEvent(QMouseEvent *event)
@@ -202,12 +208,15 @@ void PaintWidget::mouseMoveEvent(QMouseEvent *event)
             QList<Layer*>::iterator itr = _selectedLayers.begin();
             int diffx = _curMousex - _prevMousex;
             int diffy = _curMousey - _prevMousey;
-            for(;itr!=_selectedLayers.end();++itr){
-                Layer* temp = *itr;
-                int x = temp->getX() + diffx;
-                int y = temp->getY() + diffy;
-                temp->setPos(x,y);
+            if(!_firstMove){
+                for(;itr!=_selectedLayers.end();++itr){
+                    Layer* temp = *itr;
+                    int x = temp->getX() + diffx;
+                    int y = temp->getY() + diffy;
+                    temp->setPos(x,y);
+                }
             }
+            _firstMove = false;
             _prevMousex = _curMousex;
             _prevMousey = _curMousey;
             _curMousex = event->x();

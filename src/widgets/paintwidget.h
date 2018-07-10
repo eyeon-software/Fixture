@@ -47,15 +47,17 @@ protected:
     void wheelEvent(QWheelEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 
 private:
+    int _curMousex, _curMousey,_prevMousex,_prevMousey;
+    bool _leftClick,_firstMove;
+
     Drawing *d;
     QString _imagePath;
     QList<Layer*> _items;
     Tool::ToolType _currentTool;
     QList<Layer*> _selectedLayers;
-    int _curMousex, _curMousey,_prevMousex,_prevMousey;
-    bool _leftClick;
 
     QImage getImageFromPath(const QString &imagePath);
     void setupCanvas(QImage image);
