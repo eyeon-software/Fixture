@@ -28,8 +28,8 @@ class PaintWidget : public QGraphicsView
 {
     Q_OBJECT
 public:
-    PaintWidget(const QString &imagePath, Tool::ToolType tool, QWidget *parent=0);
-    PaintWidget(const Canvas *document, Tool::ToolType tool, QWidget *parent=0);
+    PaintWidget(const QString &imagePath, QWidget *parent=0);
+    PaintWidget(const Canvas *document, QWidget *parent=0);
     
     inline void setImagePath(QString path) { _imagePath = path; }
     inline QString getImagePath() const { return _imagePath; }
@@ -38,7 +38,8 @@ public:
     inline void updateLayers(QList<Layer*> items){ d->updateImageCanvas(items); }
     inline void setSelectedLayers(QList<Layer*> layers){ _selectedLayers = layers; }
     static bool isFileValid(const QString& fileName);
-    void toolChanged(QAction *action);
+
+    static Tool::ToolType CurrentTool;
 
 public slots:
     void addNewLayer(const QString &imagePath);
@@ -56,7 +57,6 @@ private:
     Drawing *d;
     QString _imagePath;
     QList<Layer*> _items;
-    Tool::ToolType _currentTool;
     QList<Layer*> _selectedLayers;
 
     QImage getImageFromPath(const QString &imagePath);

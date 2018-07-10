@@ -12,6 +12,9 @@ Layer::Layer(QString name, LayerType type,
     _name(name),_type(type),
     _x(x), _y(y),_width(width), _height(height)
 {
+    _brightness = 1;
+    _contrast = 1;
+    _saturation = 1;
     setText(name);
     setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     setSizeHint(QSize(0,40));

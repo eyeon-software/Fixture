@@ -7,7 +7,6 @@
 #include <QVBoxLayout>
 #include <QFormLayout>
 #include <QMessageBox>
-#include <QDebug>
 
 #include "../model/canvas.h"
 

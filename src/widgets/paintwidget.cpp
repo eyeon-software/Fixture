@@ -1,16 +1,16 @@
 #include "paintwidget.h"
-#include <QDebug>
+
+Tool::ToolType PaintWidget::CurrentTool = Tool::Transform;
+
 /**
  * @brief PaintWidget::PaintWidget Constructs a new PaintWidget for a new document
  * Creates a new canvas based on image path
  * @param imagePath
  * @param parent
  */
-PaintWidget::PaintWidget(const QString &imagePath,Tool::ToolType tool,
-                         QWidget *parent):
+PaintWidget::PaintWidget(const QString &imagePath, QWidget *parent):
     _curMousex(0), _curMousey(0), _prevMousex(0),_prevMousey(0),
-    _leftClick(false),_firstMove(false),_currentTool(tool),
-    QGraphicsView(parent)
+    _leftClick(false),_firstMove(false), QGraphicsView(parent)
 {
     _imagePath = imagePath;
     QImage image = getImageFromPath(imagePath);
@@ -31,11 +31,9 @@ PaintWidget::PaintWidget(const QString &imagePath,Tool::ToolType tool,
  * @param document
  * @param parent
  */
-PaintWidget::PaintWidget(const Canvas *canvas,Tool::ToolType tool,
-                         QWidget *parent):
+PaintWidget::PaintWidget(const Canvas *canvas, QWidget *parent):
     _curMousex(0), _curMousey(0), _prevMousex(0),_prevMousey(0),
-    _leftClick(false),_firstMove(false),_currentTool(tool)
-    ,QGraphicsView(parent)
+    _leftClick(false),_firstMove(false), QGraphicsView(parent)
 {
     setImagePath(canvas->getName());
     
@@ -53,6 +51,7 @@ PaintWidget::PaintWidget(const Canvas *canvas,Tool::ToolType tool,
     connect(d, SIGNAL(importAvailable(QString)),
             this, SLOT(addNewLayer(QString)));
 }
+
 /**
  * @brief PaintWidget::add3NewLayer Adds a new layer based on an image
  * TODO: Support adding documents as layer
@@ -122,6 +121,7 @@ void PaintWidget::addStyleSheet()
     QString style( styleFile.readAll() );
     setStyleSheet(style);
 }
+
 /**
  * @brief PaintWidget::setupCanvas
  * Sets up the canvas and the drawing environment to place layers
@@ -135,8 +135,9 @@ void PaintWidget::setupCanvas(QImage image)
     setScene(d);
     fitInView(d->sceneRect(), Qt::KeepAspectRatio);
 }
+
 /**
- * @brief PaintWidget::updateLayers
+ * @brief PaintWidget::pushLayer
  * @param image
  * @param name
  */
@@ -145,27 +146,6 @@ void PaintWidget::pushLayer(QImage image, const QString& name)
     // Needs smarter naming based on positions on the stack
     RasterLayer* l = new RasterLayer(name,image,0,0,image.width(),image.height());
     _items.push_back(l);
-}
-
-void PaintWidget::toolChanged(QAction *action)
-{
-    Tool *activeTool = dynamic_cast<Tool*>(action);
-    switch (activeTool->getToolType()){
-
-    case Tool::Transform:
-        _currentTool = Tool::Transform;
-        setCursor(activeTool->getToolCursor());
-        break;
-
-    case Tool::Pan:
-        _currentTool = Tool::Pan;
-        setDragMode(QGraphicsView::ScrollHandDrag);
-        break;
-    }
-
-    if (activeTool->getToolType() != Tool::Pan){
-        setDragMode(QGraphicsView::NoDrag);
-    }
 }
 
 /**
@@ -210,7 +190,7 @@ void PaintWidget::mouseReleaseEvent(QMouseEvent *event)
 void PaintWidget::mouseMoveEvent(QMouseEvent *event)
 {
     if(_leftClick){
-        if(_currentTool == Tool::Transform){
+        if(CurrentTool == Tool::Transform){
             QList<Layer*>::iterator itr = _selectedLayers.begin();
             int diffx = _curMousex - _prevMousex;
             int diffy = _curMousey - _prevMousey;

@@ -11,7 +11,7 @@ public:
                 int height, int width);
     ~RasterLayer();
 
-    QImage getBitmap() { return _image; }
+    inline QImage getBitmap() { return _image; }
 
 private:
     QImage _image;

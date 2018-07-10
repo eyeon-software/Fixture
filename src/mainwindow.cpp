@@ -23,8 +23,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->layerView,SIGNAL(itemschanged()),this,SLOT(updateLayers()));
 
-    _currentPaintWidget = NULL;
-
     _toolsGroup = new QActionGroup(ui->mainToolBar);
 
     _select = new Transform();
@@ -44,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mainToolBar->addActions(_toolsList);
 
     _select->toggle();
-    _currentTool = Tool::Transform;
+    PaintWidget::CurrentTool = Tool::Transform;
 }
 
 MainWindow::~MainWindow()
@@ -65,7 +63,7 @@ void MainWindow::dropEvent(QDropEvent *e)
 
         if (PaintWidget::isFileValid(fileName)) {
             rememberLastPath(fileName);
-            addPaintWidget(new PaintWidget(fileName,_currentTool));
+            addPaintWidget(new PaintWidget(fileName));
         }
     }
 }
@@ -114,7 +112,6 @@ void MainWindow::updateWindow(QMdiSubWindow *window)
     if (window != NULL) {
         title = window->windowTitle() + " - " + title;
         PaintWidget* wid = qobject_cast<PaintWidget*> (window->widget());
-        _currentPaintWidget = wid;
         ui->layerView->updateItems(wid->getItems());
     } else {
         ui->layerView->clear();
@@ -128,7 +125,23 @@ void MainWindow::toolChanged(QAction *action)
     QMdiSubWindow *currentWindow = ui->mdiArea->activeSubWindow();
     if(currentWindow != NULL){
         PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
-        paintWidget->toolChanged(action);
+        Tool *activeTool = dynamic_cast<Tool*>(action);
+        switch (activeTool->getToolType()){
+
+        case Tool::Transform:
+            PaintWidget::CurrentTool = Tool::Transform;
+            paintWidget->setCursor(activeTool->getToolCursor());
+            break;
+
+        case Tool::Pan:
+            PaintWidget::CurrentTool = Tool::Pan;
+            paintWidget->setDragMode(QGraphicsView::ScrollHandDrag);
+            break;
+        }
+
+        if (activeTool->getToolType() != Tool::Pan){
+            paintWidget->setDragMode(QGraphicsView::NoDrag);
+        }
     }
 }
 
@@ -162,7 +175,7 @@ void MainWindow::addPaintWidget(PaintWidget *widget,bool isNew)
 
 PaintWidget *MainWindow::createPaintWidget(const QString &imagePath) const
 {
-    return new PaintWidget(imagePath,_currentTool);
+    return new PaintWidget(imagePath);
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -171,7 +184,7 @@ void MainWindow::on_actionOpen_triggered()
 
     if (PaintWidget::isFileValid(fileName)) {
         rememberLastPath(fileName);
-        addPaintWidget(new PaintWidget(fileName,_currentTool));
+        addPaintWidget(new PaintWidget(fileName));
     }
 }
 
@@ -209,15 +222,13 @@ void MainWindow::on_actionNew_triggered()
 
 void MainWindow::createNewDocument(const Canvas *canvas)
 {
-    addPaintWidget(new PaintWidget(canvas,_currentTool), true);
+    addPaintWidget(new PaintWidget(canvas), true);
     delete canvas;
 }
 
 void MainWindow::on_actionImport_triggered()
 {
     const QString fileName = chooseFile();
-
-
     QMdiSubWindow *currentWindow = ui->mdiArea->activeSubWindow();
     PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
     paintWidget->addNewLayer(fileName);

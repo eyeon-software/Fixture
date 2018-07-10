@@ -44,10 +44,8 @@ private:
     QString _lastFileLoc;
     QActionGroup *_toolsGroup;
     QList<QAction*> _toolsList;
-    PaintWidget *_currentPaintWidget;
     Transform *_select;
     Pan *_pan;
-    Tool::ToolType _currentTool;
 
     const QString chooseFile();
     void addChildWindow(PaintWidget *widget, bool isNew);

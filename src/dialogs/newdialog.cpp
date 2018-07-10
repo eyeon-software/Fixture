@@ -2,8 +2,7 @@
 #include "ui_newdialog.h"
 
 NewDialog::NewDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::NewDialog)
+    QDialog(parent), ui(new Ui::NewDialog)
 {
     ui->setupUi(this);
     ui->actionBtnsContainer->setAlignment(Qt::AlignTop);
@@ -20,18 +19,30 @@ NewDialog::~NewDialog()
 
 void NewDialog::initSignalSlots()
 {
-    connect(ui->presetCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(switchPreset(int)));
-    connect(ui->widthUnitCombo, SIGNAL(currentIndexChanged(int)), ui->heightUnitCombo, SLOT(setCurrentIndex(int)));
-    connect(ui->heightUnitCombo, SIGNAL(currentIndexChanged(int)), ui->widthUnitCombo, SLOT(setCurrentIndex(int)));
-    connect(ui->sizeCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(displaySize(QString)));
-    connect(ui->widthTxt, SIGNAL(textEdited(const QString&)), this, SLOT(switchToCustomPreset(const QString&)));
-    connect(ui->heightTxt, SIGNAL(textEdited(const QString&)), this, SLOT(switchToCustomPreset(const QString&)));
+    connect(ui->presetCombo, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(switchPreset(int)));
+
+    connect(ui->widthUnitCombo, SIGNAL(currentIndexChanged(int)),
+            ui->heightUnitCombo, SLOT(setCurrentIndex(int)));
+
+    connect(ui->heightUnitCombo, SIGNAL(currentIndexChanged(int)),
+            ui->widthUnitCombo, SLOT(setCurrentIndex(int)));
+
+    connect(ui->sizeCombo, SIGNAL(currentIndexChanged(QString)),
+            this, SLOT(displaySize(QString)));
+
+    connect(ui->widthTxt, SIGNAL(textEdited(const QString&)),
+            this, SLOT(switchToCustomPreset(const QString&)));
+
+    connect(ui->heightTxt, SIGNAL(textEdited(const QString&)),
+            this, SLOT(switchToCustomPreset(const QString&)));
 }
 
 void NewDialog::switchToCustomPreset(const QString &string)
 {
     ui->presetCombo->setCurrentIndex(Preset::CUSTOM);
 }
+
 void NewDialog::initPresetCombo()
 {
     QMap<Preset, QString> presets = getPresetList();
@@ -101,28 +112,34 @@ QMap<QString, NewDialog::PageSize> NewDialog::getUSPaperList()
 
     return stdSizes;
 }
+
 void NewDialog::switchPreset(int index)
 {
     ui->sizeCombo->setDisabled(false);
 
     switch (index) {
+
     case Preset::INTERNATIONAL:
         ui->sizeCombo->clear();
         _currSize = getInternationalList();
         ui->sizeCombo->addItems(QStringList(_currSize.keys()));
         break;
+
     case Preset::US_PAPER:
         ui->sizeCombo->clear();
         _currSize = getUSPaperList();
         ui->sizeCombo->addItems(QStringList(_currSize.keys()));
         break;
+
     case Preset::DEFAULT:
         ui->sizeCombo->clear();
         ui->sizeCombo->setDisabled(true);
         displaySizeContents(NewDialog::Default);
         break;
+
     default:
         ui->sizeCombo->setDisabled(true);
+
      }
 
 }
@@ -165,6 +182,7 @@ void NewDialog::on_actionOk_clicked()
         return;
     }
 }
+
 /**
  * @brief NewDialog::createCanvas Creates a new canvas with the given params
  *
@@ -182,12 +200,8 @@ Canvas* NewDialog::createCanvas(QString docName, double width, double height,
                                  Canvas::ResolutionUnit resUnit) const
 {
 
-    return new Canvas(docName,
-                        width,
-                        height,
-                        dimUnit,
-                        resolution,
-                        resUnit);;
+    return new Canvas(docName,width,height,
+                        dimUnit,resolution,resUnit);
 }
 
 void NewDialog::on_actionCancel_clicked()
@@ -223,6 +237,7 @@ void NewDialog::on_heightTxt_editingFinished()
         showZeroErrorMessage(msg);
     }
 }
+
 // This part needs to be heavily improved.
 void NewDialog::checkDimensionValidity(double fieldVal)
 {
@@ -243,17 +258,24 @@ int NewDialog::getPixelValue(QLineEdit *field)
     double val = getDoubleValue(field);
 
     switch(_dimensionUnit) {
+
     case Canvas::DimensionUnit::INCHES:
         return val * _resolution;
+
     case Canvas::DimensionUnit::CENTIMETERS:
         return val * _resolution / 2.54;
+
     case Canvas::DimensionUnit::MILLIMETERS:
         return val * _resolution / 25.4;
+
     case Canvas::DimensionUnit::POINTS:
         return val * _resolution / 72;
+
     case Canvas::DimensionUnit::PICAS:
         return val * _resolution / 16;
+
     default:
         return val;
+
     }
 }

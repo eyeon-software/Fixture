@@ -3,7 +3,6 @@
 Drawing::Drawing(QWidget *widget,QImage &image) :
     QGraphicsScene(widget)
 {
-
     _canvas = addPixmap(QPixmap::fromImage(image));
     _image = image;
     _width = image.width();
@@ -13,6 +12,7 @@ Drawing::Drawing(QWidget *widget,QImage &image) :
 
 Drawing::~Drawing()
 {
+
 }
 
 void Drawing::updateImageCanvas(QList<Layer *> items)
@@ -29,10 +29,14 @@ void Drawing::updateImageCanvas(QList<Layer *> items)
 
     QList<Layer*>::iterator itr = items.begin();
     for(;itr != items.end();++itr){
-        RasterLayer *l = dynamic_cast<RasterLayer*>(*itr);
-        QImage img = l->getBitmap();
-        img.scaled(l->getWidth(),l->getHeight());
-        painter.drawImage(l->getX(), l->getY(), img);
+        switch((*itr)->getType()){
+        case Layer::RasterLayer:
+            RasterLayer *l = dynamic_cast<RasterLayer*>(*itr);
+            QImage img = l->getBitmap();
+            img.scaled(l->getWidth(),l->getHeight());
+            painter.drawImage(l->getX(), l->getY(), img);
+            break;
+        }
     }
 
     painter.end();
@@ -52,6 +56,7 @@ void Drawing::dragMoveEvent(QGraphicsSceneDragDropEvent *e)
         e->acceptProposedAction();
     }
 }
+
 void Drawing::dropEvent(QGraphicsSceneDragDropEvent *e)
 {
     foreach (const QUrl &url, e->mimeData()->urls()) {
