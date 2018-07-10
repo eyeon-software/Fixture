@@ -16,39 +16,50 @@ MainWindow::MainWindow(QWidget *parent) :
     bar->setElideMode(Qt::ElideLeft);
 
     setAcceptDrops(true);
-    connect(ui->mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)),
-                     this, SLOT(updateWindow(QMdiSubWindow*)));
 
     _lastFileLoc = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
+    initTools();
+    setDefaultTool(_transform);
+
+    connect(ui->mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)),
+                     this, SLOT(updateWindow(QMdiSubWindow*)));
+
     connect(ui->layerView,SIGNAL(itemschanged()),this,SLOT(updateLayers()));
 
+    connect(ui->mainToolBar,SIGNAL(actionTriggered(QAction*)),
+            this,SLOT(changeTool(QAction*)));
+
+    connect(ui->layerView,SIGNAL(itemSelectionChanged()),
+             this,SLOT(onSelectionChange()));
+}
+
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::initTools()
+{
     _toolsGroup = new QActionGroup(ui->mainToolBar);
 
-    _select = new Transform();
-    _toolsGroup->addAction(_select);
-    _toolsList.push_back(_select);
+    _transform = new Transform();
+    _toolsGroup->addAction(_transform);
+    _toolsList.push_back(_transform);
 
     _pan = new Pan();
     _toolsGroup->addAction(_pan);
     _toolsList.push_back(_pan);
 
-    connect(ui->mainToolBar,SIGNAL(actionTriggered(QAction*)),
-            this,SLOT(toolChanged(QAction*)));
-
-    connect(ui->layerView,SIGNAL(itemSelectionChanged()),
-             this,SLOT(onSelectionChange()));
-
     ui->mainToolBar->addActions(_toolsList);
-
-    _select->toggle();
-    PaintWidget::CurrentTool = Tool::Transform;
-    _currentTool = _select;
 }
 
-MainWindow::~MainWindow()
+void MainWindow::setDefaultTool(Tool *tool)
 {
-    delete ui;
+    tool->toggle();
+    PaintWidget::CurrentTool = Tool::Transform;
+    _currentTool = tool;
 }
 void MainWindow::dragEnterEvent(QDragEnterEvent *e)
 {
@@ -121,19 +132,20 @@ void MainWindow::updateWindow(QMdiSubWindow *window)
     setWindowTitle(title);
 }
 
-void MainWindow::toolChanged(QAction *action)
+void MainWindow::changeTool(QAction *action)
 {
     QMdiSubWindow *currentWindow = ui->mdiArea->activeSubWindow();
+    _currentTool = dynamic_cast<Tool*>(action);
+
     if(currentWindow != NULL){
         PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
-        Tool *activeTool = dynamic_cast<Tool*>(action);
-        _currentTool = activeTool;
         paintWidget->setTool(_currentTool);
-        switch (activeTool->getToolType()){
+
+        switch (_currentTool->getToolType()){
 
         case Tool::Transform:
             PaintWidget::CurrentTool = Tool::Transform;
-            paintWidget->setCursor(activeTool->getToolCursor());
+            paintWidget->setCursor(_currentTool->getToolCursor());
             break;
 
         case Tool::Pan:
@@ -142,7 +154,7 @@ void MainWindow::toolChanged(QAction *action)
             break;
         }
 
-        if (activeTool->getToolType() != Tool::Pan){
+        if (_currentTool->getToolType() != Tool::Pan){
             paintWidget->setDragMode(QGraphicsView::NoDrag);
         }
     }
@@ -170,10 +182,7 @@ void MainWindow::onSelectionChange()
 void MainWindow::addPaintWidget(PaintWidget *widget,bool isNew)
 {
     addChildWindow(widget,isNew);
-
-    if(_select->isChecked()){
-        ui->mdiArea->setCursor(_select->getToolCursor());
-    }
+    ui->mdiArea->setCursor(_currentTool->getToolCursor());
 }
 
 PaintWidget *MainWindow::createPaintWidget(const QString &imagePath) const

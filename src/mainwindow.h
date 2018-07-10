@@ -45,10 +45,12 @@ private:
     QString _lastFileLoc;
     QActionGroup *_toolsGroup;
     QList<QAction*> _toolsList;
-    Transform *_select;
+    Transform *_transform;
     Pan *_pan;
     Tool *_currentTool;
 
+    void initTools();
+    void setDefaultTool(Tool *tool);
     const QString chooseFile();
     void addChildWindow(PaintWidget *widget, bool isNew);
     void addPaintWidget(PaintWidget *widget, bool isNew = false);
