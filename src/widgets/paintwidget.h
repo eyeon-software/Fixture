@@ -28,8 +28,8 @@ class PaintWidget : public QGraphicsView
 {
     Q_OBJECT
 public:
-    PaintWidget(const QString &imagePath, QWidget *parent=0);
-    PaintWidget(const Canvas *document, QWidget *parent=0);
+    PaintWidget(const QString &imagePath, Tool::ToolType tool, QWidget *parent=0);
+    PaintWidget(const Canvas *document, Tool::ToolType tool, QWidget *parent=0);
     
     inline void setImagePath(QString path) { _imagePath = path; }
     inline QString getImagePath() const { return _imagePath; }

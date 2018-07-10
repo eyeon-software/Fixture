@@ -65,7 +65,7 @@ void MainWindow::dropEvent(QDropEvent *e)
 
         if (PaintWidget::isFileValid(fileName)) {
             rememberLastPath(fileName);
-            addPaintWidget(new PaintWidget(fileName));
+            addPaintWidget(new PaintWidget(fileName,_currentTool));
         }
     }
 }
@@ -162,7 +162,7 @@ void MainWindow::addPaintWidget(PaintWidget *widget,bool isNew)
 
 PaintWidget *MainWindow::createPaintWidget(const QString &imagePath) const
 {
-    return new PaintWidget(imagePath);
+    return new PaintWidget(imagePath,_currentTool);
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -171,7 +171,7 @@ void MainWindow::on_actionOpen_triggered()
 
     if (PaintWidget::isFileValid(fileName)) {
         rememberLastPath(fileName);
-        addPaintWidget(new PaintWidget(fileName));
+        addPaintWidget(new PaintWidget(fileName,_currentTool));
     }
 }
 
@@ -209,7 +209,7 @@ void MainWindow::on_actionNew_triggered()
 
 void MainWindow::createNewDocument(const Canvas *canvas)
 {
-    addPaintWidget(new PaintWidget(canvas), true);
+    addPaintWidget(new PaintWidget(canvas,_currentTool), true);
     delete canvas;
 }
 

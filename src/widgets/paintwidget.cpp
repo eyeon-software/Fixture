@@ -6,9 +6,11 @@
  * @param imagePath
  * @param parent
  */
-PaintWidget::PaintWidget(const QString &imagePath,QWidget *parent):
+PaintWidget::PaintWidget(const QString &imagePath,Tool::ToolType tool,
+                         QWidget *parent):
     _curMousex(0), _curMousey(0), _prevMousex(0),_prevMousey(0),
-    _leftClick(false),_firstMove(false), QGraphicsView(parent)
+    _leftClick(false),_firstMove(false),_currentTool(tool),
+    QGraphicsView(parent)
 {
     _imagePath = imagePath;
     QImage image = getImageFromPath(imagePath);
@@ -19,7 +21,8 @@ PaintWidget::PaintWidget(const QString &imagePath,QWidget *parent):
 
     d->updateImageCanvas(_items);
 
-    connect(d, SIGNAL(importAvailable(QString)), this, SLOT(addNewLayer(QString)));
+    connect(d, SIGNAL(importAvailable(QString)),
+            this, SLOT(addNewLayer(QString)));
 }
 
 /**
@@ -28,9 +31,11 @@ PaintWidget::PaintWidget(const QString &imagePath,QWidget *parent):
  * @param document
  * @param parent
  */
-PaintWidget::PaintWidget(const Canvas *canvas, QWidget *parent):
+PaintWidget::PaintWidget(const Canvas *canvas,Tool::ToolType tool,
+                         QWidget *parent):
     _curMousex(0), _curMousey(0), _prevMousex(0),_prevMousey(0),
-    _leftClick(false),_firstMove(false), QGraphicsView(parent)
+    _leftClick(false),_firstMove(false),_currentTool(tool)
+    ,QGraphicsView(parent)
 {
     setImagePath(canvas->getName());
     
@@ -45,7 +50,8 @@ PaintWidget::PaintWidget(const Canvas *canvas, QWidget *parent):
     pushLayer(image, "Background");
     d->updateImageCanvas(_items);
 
-    connect(d, SIGNAL(importAvailable(QString)), this, SLOT(addNewLayer(QString)));
+    connect(d, SIGNAL(importAvailable(QString)),
+            this, SLOT(addNewLayer(QString)));
 }
 /**
  * @brief PaintWidget::add3NewLayer Adds a new layer based on an image
@@ -215,6 +221,9 @@ void PaintWidget::mouseMoveEvent(QMouseEvent *event)
                     int y = temp->getY() + diffy;
                     temp->setPos(x,y);
                 }
+            }else{
+                //Check if the mouse is over any of the selected layers
+                //if not then don't do anything.
             }
             _firstMove = false;
             _prevMousex = _curMousex;
