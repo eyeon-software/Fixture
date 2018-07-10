@@ -22,14 +22,15 @@
 #include "../model/canvas.h"
 #include "../tools/transform.h"
 #include "../tools/pan.h"
+#include "../tools/tool.h"
 #include "../layers/rasterlayer.h"
 
 class PaintWidget : public QGraphicsView
 {
     Q_OBJECT
 public:
-    PaintWidget(const QString &imagePath, QWidget *parent=0);
-    PaintWidget(const Canvas *document, QWidget *parent=0);
+    PaintWidget(const QString &imagePath, Tool *tool, QWidget *parent=0);
+    PaintWidget(const Canvas *document, Tool *tool, QWidget *parent=0);
     
     inline void setImagePath(QString path) { _imagePath = path; }
     inline QString getImagePath() const { return _imagePath; }
@@ -37,6 +38,7 @@ public:
     // This has to be extended to accomodate new documents
     inline void updateLayers(QList<Layer*> items){ d->updateImageCanvas(items); }
     inline void setSelectedLayers(QList<Layer*> layers){ _selectedLayers = layers; }
+    inline void setTool(Tool *tool) {_currentTool = tool; }
     static bool isFileValid(const QString& fileName);
 
     static Tool::ToolType CurrentTool;
@@ -66,6 +68,7 @@ private:
     void addStyleSheet();
 
     static bool isImageSupported(const QString& fileName);
+    Tool  *_currentTool;
 };
 
 #endif // PAINTWIDGET_H

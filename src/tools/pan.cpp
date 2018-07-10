@@ -11,3 +11,15 @@ Pan::~Pan()
 {
 
 }
+void Pan::move(QMouseEvent *event, QList<Layer*> &selectedLayers)
+{
+
+}
+void Pan::press(QMouseEvent *event)
+{
+
+}
+void Pan::release(QMouseEvent *event)
+{
+
+}

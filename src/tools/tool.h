@@ -2,7 +2,7 @@
 #define TOOL_H
 
 #include <QAction>
-
+#include "../layers/layer.h"
 class Tool : public QAction
 {
 public:
@@ -17,6 +17,9 @@ public:
     inline const QCursor getToolCursor() { return _cursor; }
     inline const QString getToolName() { return _name; }
     inline ToolType getToolType() { return _type; }
+    virtual void move(QMouseEvent *event, QList<Layer*> &selectedLayers) = 0;
+    virtual void press(QMouseEvent *event) = 0;
+    virtual void release(QMouseEvent *event) = 0;
 
 private:
     QCursor _cursor;

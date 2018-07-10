@@ -13,6 +13,7 @@
 #include "widgets/paintwidget.h"
 #include "tools/pan.h"
 #include "tools/transform.h"
+#include "tools/tool.h"
 
 namespace Ui {
 class MainWindow;
@@ -46,6 +47,7 @@ private:
     QList<QAction*> _toolsList;
     Transform *_select;
     Pan *_pan;
+    Tool *_currentTool;
 
     const QString chooseFile();
     void addChildWindow(PaintWidget *widget, bool isNew);

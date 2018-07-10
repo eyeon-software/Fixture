@@ -8,7 +8,8 @@ Tool::ToolType PaintWidget::CurrentTool = Tool::Transform;
  * @param imagePath
  * @param parent
  */
-PaintWidget::PaintWidget(const QString &imagePath, QWidget *parent):
+PaintWidget::PaintWidget(const QString &imagePath, Tool *tool, QWidget *parent):
+    _currentTool(tool),
     _curMousex(0), _curMousey(0), _prevMousex(0),_prevMousey(0),
     _leftClick(false),_firstMove(false), QGraphicsView(parent)
 {
@@ -31,7 +32,8 @@ PaintWidget::PaintWidget(const QString &imagePath, QWidget *parent):
  * @param document
  * @param parent
  */
-PaintWidget::PaintWidget(const Canvas *canvas, QWidget *parent):
+PaintWidget::PaintWidget(const Canvas *canvas, Tool *tool, QWidget *parent):
+    _currentTool(tool),
     _curMousex(0), _curMousey(0), _prevMousex(0),_prevMousey(0),
     _leftClick(false),_firstMove(false), QGraphicsView(parent)
 {
@@ -169,50 +171,20 @@ void PaintWidget::wheelEvent(QWheelEvent *event)
 
 void PaintWidget::mousePressEvent(QMouseEvent *event)
 {
-    _curMousex = event->x();
-    _curMousey = event->y();
-
-    if(event->button() == Qt::LeftButton){
-        _leftClick = true;
-    }else{
-        _leftClick = false;
-    }
-    _firstMove = true;
+   _currentTool->press(event);
     QGraphicsView::mousePressEvent(event);
 }
 
 void PaintWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    _firstMove = false;
+    _currentTool->release(event);
     QGraphicsView::mouseReleaseEvent(event);
 }
 
 void PaintWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    if(_leftClick){
-        if(CurrentTool == Tool::Transform){
-            QList<Layer*>::iterator itr = _selectedLayers.begin();
-            int diffx = _curMousex - _prevMousex;
-            int diffy = _curMousey - _prevMousey;
-            if(!_firstMove){
-                for(;itr!=_selectedLayers.end();++itr){
-                    Layer* temp = *itr;
-                    int x = temp->getX() + diffx;
-                    int y = temp->getY() + diffy;
-                    temp->setPos(x,y);
-                }
-            }else{
-                //Check if the mouse is over any of the selected layers
-                //if not then don't do anything.
-            }
-            _firstMove = false;
-            _prevMousex = _curMousex;
-            _prevMousey = _curMousey;
-            _curMousex = event->x();
-            _curMousey = event->y();
-            d->updateImageCanvas(_items);
-        }
-    }
+    _currentTool->move(event, _selectedLayers);
 
+    d->updateImageCanvas(_items);
     QGraphicsView::mouseMoveEvent(event);
 }

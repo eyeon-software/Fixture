@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     _select->toggle();
     PaintWidget::CurrentTool = Tool::Transform;
+    _currentTool = _select;
 }
 
 MainWindow::~MainWindow()
@@ -63,7 +64,7 @@ void MainWindow::dropEvent(QDropEvent *e)
 
         if (PaintWidget::isFileValid(fileName)) {
             rememberLastPath(fileName);
-            addPaintWidget(new PaintWidget(fileName));
+            addPaintWidget(new PaintWidget(fileName, _currentTool));
         }
     }
 }
@@ -126,6 +127,8 @@ void MainWindow::toolChanged(QAction *action)
     if(currentWindow != NULL){
         PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
         Tool *activeTool = dynamic_cast<Tool*>(action);
+        _currentTool = activeTool;
+        paintWidget->setTool(_currentTool);
         switch (activeTool->getToolType()){
 
         case Tool::Transform:
@@ -175,7 +178,7 @@ void MainWindow::addPaintWidget(PaintWidget *widget,bool isNew)
 
 PaintWidget *MainWindow::createPaintWidget(const QString &imagePath) const
 {
-    return new PaintWidget(imagePath);
+    return new PaintWidget(imagePath, _currentTool);
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -184,7 +187,7 @@ void MainWindow::on_actionOpen_triggered()
 
     if (PaintWidget::isFileValid(fileName)) {
         rememberLastPath(fileName);
-        addPaintWidget(new PaintWidget(fileName));
+        addPaintWidget(new PaintWidget(fileName, _currentTool));
     }
 }
 
@@ -222,7 +225,7 @@ void MainWindow::on_actionNew_triggered()
 
 void MainWindow::createNewDocument(const Canvas *canvas)
 {
-    addPaintWidget(new PaintWidget(canvas), true);
+    addPaintWidget(new PaintWidget(canvas, _currentTool), true);
     delete canvas;
 }
 
