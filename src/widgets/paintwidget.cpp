@@ -7,8 +7,7 @@
  * @param parent
  */
 PaintWidget::PaintWidget(const QString &imagePath, Tool *tool, QWidget *parent):
-    _curMousex(0), _curMousey(0), _prevMousex(0),_prevMousey(0),
-    _leftClick(false),_firstMove(false), QGraphicsView(parent)
+ QGraphicsView(parent)
 {
     _imagePath = imagePath;
     QImage image = getImageFromPath(imagePath);
@@ -30,8 +29,7 @@ PaintWidget::PaintWidget(const QString &imagePath, Tool *tool, QWidget *parent):
  * @param parent
  */
 PaintWidget::PaintWidget(const Canvas *canvas, Tool *tool, QWidget *parent):
-    _curMousex(0), _curMousey(0), _prevMousex(0),_prevMousey(0),
-    _leftClick(false),_firstMove(false), QGraphicsView(parent)
+ QGraphicsView(parent)
 {
     setImagePath(canvas->getName());
     setTool(tool);

@@ -40,7 +40,6 @@ void Transform::move(QMouseEvent *event)
         int diffy = _curMousey - _prevMousey;
 
         if(!_firstMove){
-
             for(;itr!= _layers->end();++itr){
 
                 Layer* temp = *itr;

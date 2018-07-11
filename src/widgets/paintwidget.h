@@ -56,9 +56,6 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event);
 
 private:
-    int _curMousex, _curMousey,_prevMousex,_prevMousey;
-    bool _leftClick,_firstMove;
-
     Drawing *d;
     QString _imagePath;
     QList<Layer*> _items;
