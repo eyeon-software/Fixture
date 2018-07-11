@@ -168,8 +168,10 @@ void PaintWidget::setSelectedLayers(QList<Layer *> layers)
     _selectedLayers = layers;
     emit layersSelected(_selectedLayers);
 }
-
-
+/**
+ * @brief PaintWidget::setTool Sets up the tool and passes on layers/selection areas if necessary
+ * @param tool
+ */
 void PaintWidget::setTool(Tool *tool)
 {
     setCursor(tool->getToolCursor());
@@ -186,9 +188,12 @@ void PaintWidget::setTool(Tool *tool)
         break;
     }
 }
+/**
+ * @brief PaintWidget::mousePressEvent Delegating to the current tool
+ * @param event
+ */
 void PaintWidget::mousePressEvent(QMouseEvent *event)
 {
-
    _currentTool->press(event);
     QGraphicsView::mousePressEvent(event);
 }

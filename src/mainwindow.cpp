@@ -20,8 +20,18 @@ MainWindow::MainWindow(QWidget *parent) :
     _lastFileLoc = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
     initTools();
+    initSignalsAndSlots();
     setDefaultTool(_transform);
+}
 
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::initSignalsAndSlots()
+{
     connect(ui->mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)),
                      this, SLOT(updateWindow(QMdiSubWindow*)));
 
@@ -32,12 +42,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->layerView,SIGNAL(itemSelectionChanged()),
              this,SLOT(onSelectionChange()));
-}
-
-
-MainWindow::~MainWindow()
-{
-    delete ui;
 }
 
 void MainWindow::initTools()
@@ -141,6 +145,7 @@ void MainWindow::changeTool(QAction *action)
         paintWidget->setTool(_currentTool);
 
         if (_currentTool->getToolType() == Tool::PERCEPTION){
+            //The cursor needs to be fixed for zoom here.
             paintWidget->setDragMode(QGraphicsView::ScrollHandDrag);
         }
         else {

@@ -50,6 +50,7 @@ private:
     Tool *_currentTool;
 
     void initTools();
+    void initSignalsAndSlots();
     void setDefaultTool(Tool *tool);
     const QString chooseFile();
     void addChildWindow(PaintWidget *widget, bool isNew);
