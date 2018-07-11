@@ -1,7 +1,5 @@
 #include "paintwidget.h"
 
-Tool::ToolType PaintWidget::CurrentTool = Tool::Transform;
-
 /**
  * @brief PaintWidget::PaintWidget Constructs a new PaintWidget for a new document
  * Creates a new canvas based on image path
@@ -171,6 +169,7 @@ void PaintWidget::wheelEvent(QWheelEvent *event)
 
 void PaintWidget::mousePressEvent(QMouseEvent *event)
 {
+
    _currentTool->press(event);
     QGraphicsView::mousePressEvent(event);
 }

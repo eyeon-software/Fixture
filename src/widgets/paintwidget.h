@@ -38,7 +38,7 @@ public:
     // This has to be extended to accomodate new documents
     inline void updateLayers(QList<Layer*> items){ d->updateImageCanvas(items); }
     inline void setSelectedLayers(QList<Layer*> layers){ _selectedLayers = layers; }
-    inline void setTool(Tool *tool) {_currentTool = tool; }
+    inline void setTool(Tool *tool) { _currentTool = tool; setCursor(tool->getToolCursor()); }
     static bool isFileValid(const QString& fileName);
 
     static Tool::ToolType CurrentTool;

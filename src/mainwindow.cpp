@@ -58,7 +58,6 @@ void MainWindow::initTools()
 void MainWindow::setDefaultTool(Tool *tool)
 {
     tool->toggle();
-    PaintWidget::CurrentTool = Tool::Transform;
     _currentTool = tool;
 }
 void MainWindow::dragEnterEvent(QDragEnterEvent *e)
@@ -141,20 +140,10 @@ void MainWindow::changeTool(QAction *action)
         PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
         paintWidget->setTool(_currentTool);
 
-        switch (_currentTool->getToolType()){
-
-        case Tool::Transform:
-            PaintWidget::CurrentTool = Tool::Transform;
-            paintWidget->setCursor(_currentTool->getToolCursor());
-            break;
-
-        case Tool::Pan:
-            PaintWidget::CurrentTool = Tool::Pan;
+        if (_currentTool->getToolType() == Tool::PERCEPTION){
             paintWidget->setDragMode(QGraphicsView::ScrollHandDrag);
-            break;
         }
-
-        if (_currentTool->getToolType() != Tool::Pan){
+        else {
             paintWidget->setDragMode(QGraphicsView::NoDrag);
         }
     }

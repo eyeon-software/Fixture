@@ -33,7 +33,7 @@ public slots:
 
 private slots:
     void updateWindow(QMdiSubWindow *window);
-    void toolChanged(QAction* action);
+    void changeTool(QAction* action);
     void onSelectionChange();
     void on_actionNew_triggered();
     void on_actionOpen_triggered();
