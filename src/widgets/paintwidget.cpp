@@ -7,13 +7,12 @@
  * @param parent
  */
 PaintWidget::PaintWidget(const QString &imagePath, Tool *tool, QWidget *parent):
-    _currentTool(tool),
     _curMousex(0), _curMousey(0), _prevMousex(0),_prevMousey(0),
     _leftClick(false),_firstMove(false), QGraphicsView(parent)
 {
     _imagePath = imagePath;
     QImage image = getImageFromPath(imagePath);
-
+    setTool(tool);
     addStyleSheet();
     setupCanvas(image);
     pushLayer(image, "Background");
@@ -31,12 +30,11 @@ PaintWidget::PaintWidget(const QString &imagePath, Tool *tool, QWidget *parent):
  * @param parent
  */
 PaintWidget::PaintWidget(const Canvas *canvas, Tool *tool, QWidget *parent):
-    _currentTool(tool),
     _curMousex(0), _curMousey(0), _prevMousex(0),_prevMousey(0),
     _leftClick(false),_firstMove(false), QGraphicsView(parent)
 {
     setImagePath(canvas->getName());
-    
+    setTool(tool);
     QSize imageSize(canvas->getWidth(), canvas->getHeight());
 
     QImage image(imageSize, QImage::Format_ARGB32_Premultiplied);
@@ -167,6 +165,29 @@ void PaintWidget::wheelEvent(QWheelEvent *event)
     verticalScrollBar()->setValue(move.y() + verticalScrollBar()->value());
 }
 
+void PaintWidget::setSelectedLayers(QList<Layer *> layers)
+{
+    _selectedLayers = layers;
+    emit layersSelected(_selectedLayers);
+}
+
+
+void PaintWidget::setTool(Tool *tool)
+{
+    _currentTool = tool;
+    setCursor(tool->getToolCursor());
+
+    switch (_currentTool->getToolType()) {
+    case Tool::SELECTION:
+    {
+        AbstractSelection *curTool = dynamic_cast<AbstractSelection*>(tool);
+        curTool->setLayers(_selectedLayers);
+        break;
+    }
+    default:
+        break;
+    }
+}
 void PaintWidget::mousePressEvent(QMouseEvent *event)
 {
 
@@ -182,7 +203,7 @@ void PaintWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void PaintWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    _currentTool->move(event, _selectedLayers);
+    _currentTool->move(event);
 
     d->updateImageCanvas(_items);
     QGraphicsView::mouseMoveEvent(event);

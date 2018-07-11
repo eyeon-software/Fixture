@@ -1,16 +1,15 @@
 #ifndef SELECTTOOL_H
 #define SELECTTOOL_H
 
-#include <QMouseEvent>
-#include "tool.h"
-#include "../layers/layer.h"
+#include <QDebug>
+#include "abstractselection.h"
 
-class Transform : public Tool
+class Transform : public AbstractSelection
 {
 public:
     Transform(QWidget *parent=0);
     ~Transform();
-    void move(QMouseEvent *event, QList<Layer*> &selectedLayers);
+    void move(QMouseEvent *event);
     void press(QMouseEvent *event);
     void release(QMouseEvent *event);
 private:

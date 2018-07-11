@@ -37,14 +37,17 @@ public:
     inline QList<Layer*> getItems() const { return _items; }
     // This has to be extended to accomodate new documents
     inline void updateLayers(QList<Layer*> items){ d->updateImageCanvas(items); }
-    inline void setSelectedLayers(QList<Layer*> layers){ _selectedLayers = layers; }
-    inline void setTool(Tool *tool) { _currentTool = tool; setCursor(tool->getToolCursor()); }
+    void setSelectedLayers(QList<Layer*> layers);
+    void setTool(Tool *tool);
     static bool isFileValid(const QString& fileName);
 
     static Tool::ToolType CurrentTool;
 
 public slots:
     void addNewLayer(const QString &imagePath);
+
+signals:
+    void layersSelected(QList<Layer*> layers);
 
 protected:
     void wheelEvent(QWheelEvent *event);

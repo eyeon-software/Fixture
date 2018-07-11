@@ -35,7 +35,8 @@ SOURCES +=  \
     src/tools/pan.cpp \
     src/layers/rasterlayer.cpp \
     src/layers/layer.cpp \
-    src/model/drawing.cpp
+    src/model/drawing.cpp \
+    src/tools/abstractselection.cpp
 
 HEADERS += \
     src/dialogs/newdialog.h \
@@ -48,7 +49,8 @@ HEADERS += \
     src/tools/pan.h \
     src/layers/rasterlayer.h \
     src/layers/layer.h \
-    src/model/drawing.h
+    src/model/drawing.h \
+    src/tools/abstractselection.h
 
 FORMS += \
     src/mainwindow.ui \

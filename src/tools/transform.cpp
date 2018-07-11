@@ -28,20 +28,20 @@ void Transform::release(QMouseEvent *event)
     _firstMove = false;
 }
 
-void Transform::move(QMouseEvent *event, QList<Layer *> &selectedLayers)
+void Transform::move(QMouseEvent *event)
 {
     _curMousex = event->x();
     _curMousey = event->y();
 
     if(_leftClick){
-        QList<Layer*>::iterator itr = selectedLayers.begin();
+        QList<Layer*>::iterator itr = _layers->begin();
 
         int diffx = _curMousex - _prevMousex;
         int diffy = _curMousey - _prevMousey;
 
         if(!_firstMove){
 
-            for(;itr!= selectedLayers.end();++itr){
+            for(;itr!= _layers->end();++itr){
 
                 Layer* temp = *itr;
                 int x = temp->getX() + diffx;
