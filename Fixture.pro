@@ -36,7 +36,8 @@ SOURCES +=  \
     src/layers/rasterlayer.cpp \
     src/layers/layer.cpp \
     src/model/drawing.cpp \
-    src/tools/abstractselection.cpp
+    src/tools/abstractselection.cpp \
+    src/tools/abstractperception.cpp
 
 HEADERS += \
     src/dialogs/newdialog.h \
@@ -50,7 +51,8 @@ HEADERS += \
     src/layers/rasterlayer.h \
     src/layers/layer.h \
     src/model/drawing.h \
-    src/tools/abstractselection.h
+    src/tools/abstractselection.h \
+    src/tools/abstractperception.h
 
 FORMS += \
     src/mainwindow.ui \

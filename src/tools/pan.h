@@ -1,9 +1,9 @@
 #ifndef PANTOOL_H
 #define PANTOOL_H
 
-#include "tool.h"
+#include "abstractperception.h"
 
-class Pan : public Tool
+class Pan : public AbstractPerception
 {
 public:
     Pan(QWidget *parent=0);

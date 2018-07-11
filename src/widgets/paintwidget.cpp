@@ -172,12 +172,12 @@ void PaintWidget::setSelectedLayers(QList<Layer *> layers)
 
 void PaintWidget::setTool(Tool *tool)
 {
-    _currentTool = tool;
     setCursor(tool->getToolCursor());
+    _currentTool = tool;
 
     switch (_currentTool->getToolType()) {
-    case Tool::SELECTION:
-    {
+    case Tool::SELECTION: {
+        // Selection tools require layers
         AbstractSelection *curTool = dynamic_cast<AbstractSelection*>(tool);
         curTool->setLayers(_selectedLayers);
         break;

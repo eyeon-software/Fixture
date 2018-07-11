@@ -20,8 +20,7 @@
 #include "../model/drawing.h"
 #include "../widgets/paintwidget.h"
 #include "../model/canvas.h"
-#include "../tools/transform.h"
-#include "../tools/pan.h"
+#include "../tools/abstractselection.h"
 #include "../tools/tool.h"
 #include "../layers/rasterlayer.h"
 
@@ -40,8 +39,6 @@ public:
     void setSelectedLayers(QList<Layer*> layers);
     void setTool(Tool *tool);
     static bool isFileValid(const QString& fileName);
-
-    static Tool::ToolType CurrentTool;
 
 public slots:
     void addNewLayer(const QString &imagePath);
