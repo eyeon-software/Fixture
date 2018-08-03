@@ -73,8 +73,10 @@ private:
     void setCurrentTool(Tool *tool);
     void activateMenu(QWidget *menuWidget);
     void updateMenuFromCache(QWidget *widget);
+    void setFilters(QFileDialog&);
     const QString chooseFileForOpening(const QString &prompt);
-    const QString chooseFileForSaving(const QString &prompt);
+    bool saveFileWithDialog(PaintWidget* paintWidget);
+    void persistFromDialog(QFileDialog &, PaintWidget *);
     void addChildWindow(PaintWidget *widget, bool isNew);
     void setupSubWindowTitle(QMdiSubWindow*, const QString&, bool isNew);
     void addPaintWidget(PaintWidget *widget, bool isNew = false);
@@ -84,7 +86,10 @@ private:
     void openNewFile(const QString&);
     PaintWidget *createPaintWidget(const QString &imagePath) const;
     void rememberLastPath(const QString& fileName);
-    QString getFileName(QString &name);
+    QString getCorrectFileName(QString &name);
+    void serialize(QString, SupportedTypes, PaintWidget *paintWidget);
+    void saveToFXD(const QString&, PaintWidget*);
+    void saveToPNG(const QString&, PaintWidget*);
     void storeDocument(const QString &fileName, Document document);
     Document readDocument(const QString&);
     void updateStateChange(State state, const QString &fileName, QMdiSubWindow *subWindow);

@@ -20,13 +20,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::initSupportedFileMap()
 {
-    _supportedTypeMap.insert(FXD, "Fixture document (*.fxd *.fxt);;");
-    _supportedTypeMap.insert(IMAGE, "Image Files (*.png *.jpg *.jpeg *.gif);;");
-    _supportedTypeMap.insert(PNG, "PNG (*.png);;");
-    _supportedTypeMap.insert(JPG, "JPEG (*.jpg *.jpeg);;");
-    _supportedTypeMap.insert(GIF, "GIF (*.gif);;");
-    _supportedTypeMap.insert(TIFF, "TIFF (*.tif *.tiff);;");
-    _supportedTypeMap.insert(ICO, "ICO (*.ico);;");
+    _supportedTypeMap.insert(FXD, "Fixture document (*.fxd *.fxt)");
+    _supportedTypeMap.insert(IMAGE, "Image Files (*.png *.jpg *.jpeg *.gif)");
+    _supportedTypeMap.insert(PNG, "PNG (*.png)");
+    _supportedTypeMap.insert(JPG, "JPEG (*.jpg *.jpeg)");
+    _supportedTypeMap.insert(GIF, "GIF (*.gif)");
+    _supportedTypeMap.insert(TIFF, "TIFF (*.tif *.tiff)");
+    _supportedTypeMap.insert(ICO, "ICO (*.ico)");
     _supportedTypeMap.insert(ICO, "BMP (*.bmp)");
 
 }
@@ -324,14 +324,29 @@ void MainWindow::rememberLastPath(const QString &fileName)
 
 const QString MainWindow::chooseFileForOpening(const QString& prompt)
 {
-    return QFileDialog::getOpenFileName(this, tr(qPrintable(prompt)),
-                _lastFileLoc, tr(qPrintable(_filterListString)));
+    QFileDialog fileDialog(this, tr(qPrintable(prompt)),
+                           _lastFileLoc);
+    fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
+
+    setFilters(fileDialog);
+
+    if (fileDialog.exec() == QDialog::Accepted)
+    {
+        return fileDialog.selectedFiles()[0];
+    }
+
+    return NULL;
 }
 
-const QString MainWindow::chooseFileForSaving(const QString &prompt)
+void MainWindow::setFilters(QFileDialog& fileDialog)
 {
-   return QFileDialog::getSaveFileName(this, tr(qPrintable(prompt)),
-                                           _lastFileLoc, tr(qPrintable(_filterListString)));
+    QStringList filters = QStringList(_supportedTypeMap.values());
+    fileDialog.setNameFilters(filters);
+}
+
+bool MainWindow::saveFileWithDialog(PaintWidget* paintWidget)
+{
+
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -372,19 +387,55 @@ void MainWindow::on_actionSaveAs_triggered()
     QMdiSubWindow *currentWindow = ui->mdiArea->activeSubWindow();
     PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
 
-    QString fileName = chooseFileForSaving("Save As");
-    // Check with the filter here
-    fileName = getFileName(fileName);
+    QFileDialog fileDialog(this, tr(qPrintable("Save as")),
+                                     _lastFileLoc);
+    //fileDialog.selectFile(fileName);
+    fileDialog.setAcceptMode(QFileDialog::AcceptSave);
+    setFilters(fileDialog);
 
+    if (fileDialog.exec() == QDialog::Accepted) {
+        persistFromDialog(fileDialog, paintWidget);
+        updateStateChange(SAVED, fileDialog.selectedFiles()[0], currentWindow);
+    }
+}
+
+void MainWindow::persistFromDialog(QFileDialog &fileDialog, PaintWidget* paintWidget)
+{
+    QString filter = fileDialog.selectedNameFilter();
+    QString fileName = fileDialog.selectedFiles()[0];
+    serialize(fileName, _supportedTypeMap.key(filter), paintWidget);
+}
+
+void MainWindow::serialize(QString fileName, SupportedTypes type, PaintWidget* paintWidget)
+{
+    switch (type) {
+    case PNG:
+        saveToPNG(fileName, paintWidget);
+        break;
+    case FXD:
+        saveToFXD(getCorrectFileName(fileName), paintWidget);
+        break;
+    default:
+        break;
+    }
+}
+
+void MainWindow::saveToPNG(const QString &fileName, PaintWidget *paintWidget)
+{
+    QImage image(paintWidget->sceneRect().size().toSize(), QImage::Format_ARGB32);
+    QPainter painter(&image);
+    paintWidget->render(&painter);
+    image.save(fileName);
+}
+void MainWindow::saveToFXD(const QString &fileName, PaintWidget* paintWidget)
+{
     QList<Layer*> layers = paintWidget->getItems();
     QSharedDataPointer<Canvas> canvas = paintWidget->getCanvas();
     Document document(layers, canvas);
 
     storeDocument(fileName, document);
-    updateStateChange(SAVED, fileName, currentWindow);
 }
-
-QString MainWindow::getFileName(QString &fileName)
+QString MainWindow::getCorrectFileName(QString &fileName)
 {
     if (!fileName.endsWith(".fxt") && !fileName.endsWith(".fxd")) {
         fileName = fileName + ".fxd";
