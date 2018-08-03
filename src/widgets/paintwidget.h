@@ -30,6 +30,7 @@ class PaintWidget : public QGraphicsView
 {
     Q_OBJECT
 public:
+
     PaintWidget(const QString &imagePath, Tool *tool, QWidget *parent=0);
     PaintWidget(const QSharedDataPointer<Canvas> canvas, Tool *tool, QWidget *parent=0);
     PaintWidget(Document &document, Tool *tool, QWidget *parent=0);

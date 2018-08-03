@@ -55,7 +55,13 @@ private:
     enum State {
         SAVED, MODIFIED
     };
-
+    enum SupportedTypes {
+        FXD, IMAGE, PNG, JPG, GIF, TIFF, ICO, BMP
+    };
+    QMap<SupportedTypes, QString> _supportedTypeMap;
+    QString _filterListString;
+    void initSupportedFileMap();
+    void initFilterListString();
     void openNewImage(const QString &);
     void setupMdiArea();
     void setupTabBar(QTabBar* bar);
@@ -67,7 +73,8 @@ private:
     void setCurrentTool(Tool *tool);
     void activateMenu(QWidget *menuWidget);
     void updateMenuFromCache(QWidget *widget);
-    const QString chooseFile();
+    const QString chooseFileForOpening(const QString &prompt);
+    const QString chooseFileForSaving(const QString &prompt);
     void addChildWindow(PaintWidget *widget, bool isNew);
     void setupSubWindowTitle(QMdiSubWindow*, const QString&, bool isNew);
     void addPaintWidget(PaintWidget *widget, bool isNew = false);

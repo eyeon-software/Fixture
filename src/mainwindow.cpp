@@ -9,7 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setupMdiArea();
     initTools();
     initSignalsAndSlots();
-
+    initSupportedFileMap();
+    initFilterListString();
     Transform *transform = dynamic_cast<Transform*>(_toolsList.value(0));
     setDefaultTool(transform);
     _lastFileLoc = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
@@ -17,7 +18,27 @@ MainWindow::MainWindow(QWidget *parent) :
     setAcceptDrops(true);
 }
 
+void MainWindow::initSupportedFileMap()
+{
+    _supportedTypeMap.insert(FXD, "Fixture document (*.fxd *.fxt);;");
+    _supportedTypeMap.insert(IMAGE, "Image Files (*.png *.jpg *.jpeg *.gif);;");
+    _supportedTypeMap.insert(PNG, "PNG (*.png);;");
+    _supportedTypeMap.insert(JPG, "JPEG (*.jpg *.jpeg);;");
+    _supportedTypeMap.insert(GIF, "GIF (*.gif);;");
+    _supportedTypeMap.insert(TIFF, "TIFF (*.tif *.tiff);;");
+    _supportedTypeMap.insert(ICO, "ICO (*.ico);;");
+    _supportedTypeMap.insert(ICO, "BMP (*.bmp)");
 
+}
+
+void MainWindow::initFilterListString()
+{
+    QMap<SupportedTypes, QString>::iterator i;
+
+    for (i = _supportedTypeMap.begin(); i != _supportedTypeMap.end(); ++i) {
+        _filterListString += i.value();
+    }
+}
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -260,7 +281,7 @@ PaintWidget *MainWindow::createPaintWidget(const QString &imagePath) const
 
 void MainWindow::on_actionOpen_triggered()
 {
-    const QString fileName = chooseFile();
+    const QString fileName = chooseFileForOpening("Open");
 
     if (_windowCache.contains(fileName)) {
         ui->mdiArea->setActiveSubWindow(_windowCache.value(fileName));
@@ -301,17 +322,16 @@ void MainWindow::rememberLastPath(const QString &fileName)
     _lastFileLoc = info.absolutePath();
 }
 
-const QString MainWindow::chooseFile()
+const QString MainWindow::chooseFileForOpening(const QString& prompt)
 {
-    return QFileDialog::getOpenFileName(this, tr("Open File"),
-                _lastFileLoc,tr("Image Files (*.png *.jpg *.jpeg *.gif);;"
-                                "Fixture document (*.fxd *.fxt);;"
-                                "PNG(*.png);;"
-                                "JPEG(*.jpg *.jpeg);;"
-                                "GIF(*.gif);;"
-                                "TIFF(*.tif *.tiff);;"
-                                "BMP(*.bmp);;"
-                                "ICO(*.ico)"));
+    return QFileDialog::getOpenFileName(this, tr(qPrintable(prompt)),
+                _lastFileLoc, tr(qPrintable(_filterListString)));
+}
+
+const QString MainWindow::chooseFileForSaving(const QString &prompt)
+{
+   return QFileDialog::getSaveFileName(this, tr(qPrintable(prompt)),
+                                           _lastFileLoc, tr(qPrintable(_filterListString)));
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -335,7 +355,7 @@ void MainWindow::createNewDocument(const QSharedDataPointer<Canvas> canvas)
 
 void MainWindow::on_actionImport_triggered()
 {
-    const QString fileName = chooseFile();
+    const QString fileName = chooseFileForOpening("Import File");
     QMdiSubWindow *currentWindow = ui->mdiArea->activeSubWindow();
     PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
 
@@ -352,10 +372,8 @@ void MainWindow::on_actionSaveAs_triggered()
     QMdiSubWindow *currentWindow = ui->mdiArea->activeSubWindow();
     PaintWidget* paintWidget = qobject_cast<PaintWidget*> (currentWindow->widget());
 
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                                       _lastFileLoc,
-                                       tr("Fixture Document (*.fxd *.fxt)"));
-
+    QString fileName = chooseFileForSaving("Save As");
+    // Check with the filter here
     fileName = getFileName(fileName);
 
     QList<Layer*> layers = paintWidget->getItems();
