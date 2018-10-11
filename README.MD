@@ -1,11 +1,11 @@
 # Fixture
 ![Fixture Logo](https://image.ibb.co/db15Lz/logo_small.png)
 
-**Fixture** is a no-bullshit, free and open source raster graphics editor.
+**Fixture** is a no-bullshit, it is a free and open source raster graphics editor.
 
 ## Motivation
 
-**Fixture** is an attempt to be a multiplatform, free and open source replacement for Adobe Photoshop. This aims to solve the need for having a proper raster graphics editor with a clean and focused UI, to help graphic artists and regular users morph or create images quickly, even on a Linux distribution.
+**Fixture** is an attempt to be a multiplatform, free and open source replacement for Adobe Photoshop. This aims to solve the need for having a proper raster graphics editor with a clean and focused UI, to help graphic artists and regular users morph or create images quickly, even on a Linux distribution. Lets give boost up to OpenSource Community and make the life easy.
 
 **Example window [WIP]**
 ![Fixture screenshot(WIP)](https://image.ibb.co/mL8Hdz/screenshot_20180727_153726.png)
