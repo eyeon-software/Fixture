@@ -34,30 +34,18 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
+set(CMAKE_CXX_STANDARD 17)
+
+include_directories(
+    src
+    lib/canvas
+)
+
 set(SOURCES
-    resources/resources.qrc
-    src/dialogs/newdialog.cpp 
-    src/widgets/paintwidget.cpp 
-    src/main.cpp 
-    src/mainwindow.cpp 
-    src/widgets/layermanager.cpp 
-    src/model/canvas.cpp 
-    src/tools/tool.cpp 
-    src/tools/transform.cpp 
-    src/tools/pan.cpp 
-    src/layers/rasterlayer.cpp 
-    src/layers/layer.cpp 
-    src/model/drawing.cpp 
-    src/tools/abstractselection.cpp 
-    src/tools/abstractperception.cpp 
-    src/tools/components/boundingrectitem.cpp 
-    src/tools/tooloptions/transform_menu.cpp 
-    src/tools/tooloptions/toolmenu.cpp
-    src/tools/tooloptions/pan_menu.cpp
-    src/model/document.cpp
-    src/mainwindow.ui 
-    src/dialogs/newdialog.ui 
-    src/tools/tooloptions/pan_menu.ui
+    src/main.cc
+    src/mainwindow.ui
+    src/mainwindow.cc
+    lib/canvas/FixtureCanvas.cc
 )
 
 add_executable(fixture  ${SOURCES})
@@ -66,6 +54,33 @@ target_link_libraries(fixture
     Qt5::Gui
     Qt5::Core
 )
+
+# Setting up clang-tidy
+find_program(
+    CLANG_TIDY_EXE
+    NAMES "clang-tidy"
+    DOC "Path to clang-tidy executable"
+    )
+if(NOT CLANG_TIDY_EXE)
+    message(STATUS "clang-tidy not found.")
+else()
+    message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
+    set(DO_CLANG_TIDY "${CLANG_TIDY_EXE}" "-checks=*,-clang-analyzer-alpha.*,-header-filter=.*")
+endif()
+
+set_target_properties(
+    fixture PROPERTIES
+    CXX_STANDARD ${CMAKE_CXX_STANDARD}
+    CXX_STANDARD_REQUIRED ON
+    COMPILE_FLAGS "${WARNING_FLAGS}"
+)
+
+if(CLANG_TIDY_EXE)
+    set_target_properties(
+        fixture PROPERTIES
+        CXX_CLANG_TIDY "${DO_CLANG_TIDY}"
+    )
+endif()
 
 install(TARGETS fixture DESTINATION bin)
 
