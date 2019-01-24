@@ -38,7 +38,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(
     src
-    lib/canvas
+    lib
 )
 
 set(SOURCES
@@ -46,6 +46,7 @@ set(SOURCES
     src/mainwindow.ui
     src/mainwindow.cc
     lib/canvas/FixtureCanvas.cc
+    lib/canvas/PaintWidget.cc
 )
 
 add_executable(fixture  ${SOURCES})

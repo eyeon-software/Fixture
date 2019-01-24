@@ -5,7 +5,7 @@ int
 main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    MainWindow w;
+    Fixture::MainWindow w(nullptr);
     w.show();
     return app.exec();
 }
