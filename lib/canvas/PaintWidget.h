@@ -9,6 +9,8 @@ namespace Fixture{
         Q_OBJECT
         public:
             PaintWidget(QWidget *parent);
+        protected:
+            void paintEvent(QPaintEvent *event);
 
         private:
             Fixture::Canvas *_canvas;
